@@ -1,23 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import LayoutEditor from "./components/LayoutEditor";
+import DRC from "./components/DRC";
+import "./App.css";
 
 function App() {
+  const [showDRC, setShowDRC] = useState(false);
+  const [layers, setLayers] = useState([]);
+
+  const handleRunDRC = () => {
+    setShowDRC(true);
+  };
+
+  const handleCloseDRC = () => {
+    setShowDRC(false);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>VLSI Layout Editor</h1>
       </header>
+      <main>
+        <LayoutEditor
+          layers={layers}
+          setLayers={setLayers}
+          onRunDRC={handleRunDRC}
+        />
+        {showDRC && <DRC layers={layers} onClose={handleCloseDRC} />}
+      </main>
     </div>
   );
 }

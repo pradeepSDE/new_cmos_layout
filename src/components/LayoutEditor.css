@@ -1,0 +1,263 @@
+.layout-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  background-color: #f5f5f5;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-items: center;
+}
+
+.layer-type-selector {
+  display: flex;
+  gap: 8px;
+  margin-right: 20px;
+  padding-right: 20px;
+  border-right: 1px solid #E0E0E0;
+}
+
+.layer-type-button {
+  width: 24px;
+  height: 24px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.layer-type-button:hover {
+  transform: scale(1.1);
+}
+
+.layer-type-button.selected {
+  border-color: #333;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #333;
+}
+
+.toolbar button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #2196F3;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toolbar button:hover {
+  background-color: #1976D2;
+}
+
+.toolbar button:disabled {
+  background-color: #BDBDBD;
+  cursor: not-allowed;
+}
+
+.canvas-container {
+  position: relative;
+  width: 1000px;
+  height: 800px;
+  background-color: white;
+  border: 1px solid #BDBDBD;
+  background-image: 
+    linear-gradient(to right, #e0e0e0 1px, transparent 1px),
+    linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.grid-line {
+  display: none; /* Hide individual grid lines since we're using CSS gradients */
+}
+
+/* Layer patterns */
+@keyframes metal1Pattern {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 20px; }
+}
+
+@keyframes metal2Pattern {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 20px; }
+}
+
+@keyframes polyPattern {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 20px; }
+}
+
+@keyframes diffusionPattern {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 20px; }
+}
+
+@keyframes nwellPattern {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 20px; }
+}
+
+@keyframes pwellPattern {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 20px; }
+}
+
+.layer {
+  position: absolute;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: move;
+  transition: all 0.2s;
+}
+
+/* Metal 1 pattern - diagonal lines */
+.layer[data-pattern="metal1"] {
+  background-image: 
+    linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  animation: metal1Pattern 2s linear infinite;
+}
+
+/* Metal 2 pattern - dots */
+.layer[data-pattern="metal2"] {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.1) 2px, transparent 2px);
+  background-size: 10px 10px;
+  animation: metal2Pattern 2s linear infinite;
+}
+
+/* Poly pattern - horizontal lines */
+.layer[data-pattern="poly"] {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: polyPattern 2s linear infinite;
+}
+
+/* Diffusion pattern - checkerboard */
+.layer[data-pattern="diffusion"] {
+  background-image: 
+    linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%);
+  background-size: 10px 10px;
+  animation: diffusionPattern 2s linear infinite;
+}
+
+/* N-Well pattern - vertical lines */
+.layer[data-pattern="nwell"] {
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  animation: nwellPattern 2s linear infinite;
+}
+
+/* P-Well pattern - crosshatch */
+.layer[data-pattern="pwell"] {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 10px 10px;
+  animation: pwellPattern 2s linear infinite;
+}
+
+.layer:hover {
+  border-color: #2196F3;
+  box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
+}
+
+.layer.selected {
+  border: 2px solid #2196F3;
+  box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+}
+
+.layer.overlapping {
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.3);
+}
+
+.layer.overlapping.selected {
+  box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.3), 0 0 5px rgba(33, 150, 243, 0.5);
+}
+
+.layer.hidden {
+  border-style: dashed;
+  opacity: 0.7;
+}
+
+.layer.hidden.selected {
+  border-style: solid;
+  opacity: 1;
+  box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+}
+
+.preview-layer {
+  position: absolute;
+  border: 2px dashed #2196F3;
+  background-color: rgba(33, 150, 243, 0.1);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.dimension-display {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dimension-info {
+  display: flex;
+  gap: 20px;
+  font-family: monospace;
+  color: #333;
+}
+
+.dimension-info span {
+  padding: 4px 8px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.grid-labels {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.grid-label {
+  position: absolute;
+  font-size: 12px;
+  color: #666;
+  font-family: monospace;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+.x-label {
+  transform: translateX(-50%);
+}
+
+.y-label {
+  transform: translateY(-50%);
+  text-align: right;
+  width: 35px;
+} 
