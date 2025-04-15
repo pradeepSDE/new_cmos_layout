@@ -4,106 +4,186 @@ import "./DRC.css";
 const DRC = ({ layers, onClose }) => {
   // Design rule constants (in lambda units)
   const DESIGN_RULES = {
-    MIN_WIDTH: 2, // Minimum width for all layers
-    MIN_AREA: 4, // Minimum area for all layers
-    MIN_SPACING: 1, // Minimum spacing between any layers
-    LAYER_SPECIFIC_SPACING: {
-      metal1: {
-        metal1: 2, // Metal1 to Metal1 spacing
-        metal2: 1, // Metal1 to Metal2 spacing
-        poly: 1, // Metal1 to Poly spacing
-      },
-      metal2: {
-        metal1: 1, // Metal2 to Metal1 spacing
-        metal2: 2, // Metal2 to Metal2 spacing
-        poly: 1, // Metal2 to Poly spacing
-      },
-      poly: {
-        metal1: 1, // Poly to Metal1 spacing
-        metal2: 1, // Poly to Metal2 spacing
-        poly: 1, // Poly to Poly spacing
-      },
-    },
-    LAYER_MIN_WIDTH: {
-      metal1: 2, // Metal1 minimum width
-      metal2: 2, // Metal2 minimum width
-      poly: 2, // Poly minimum width
-      diffusion: 2, // Diffusion minimum width
-      nwell: 2, // N-Well minimum width
-      pwell: 2, // P-Well minimum width
-    },
+    // Well rules
+    WELL_MIN_SIZE: 10, // N-well/P-well minimum size
+    WELL_SPACING: 4, // N-well to N-well spacing
+
+    // Diffusion rules
+    DIFF_MIN_SIZE: 3, // P+/N+ diffusion minimum size
+    DIFF_TO_WELL_SPACING: 5, // N+ diffusion to N-well spacing
+    DIFF_TO_SUBSTRATE_SPACING: 4, // Diffusion to substrate spacing
+
+    // Poly rules
+    POLY_MIN_WIDTH: 2, // Polysilicon minimum width
+    POLY_OVERHANG: 2, // Poly overhang over transistor
+
+    // Metal rules
+    METAL1_MIN_SIZE: 3, // Metal 1 minimum size
+    METAL1_SPACING: 3, // Metal 1 to Metal 1 spacing
+
+    // Contact rules
+    CONTACT_MIN_SIZE: 4, // Contact minimum size
+    CONTACT_SPACING: 4, // Contact to contact spacing
+    POLY_TO_CONTACT_SPACING: 1, // Poly to diffusion contact spacing
   };
 
-  const checkOverlaps = () => {
+  const checkWellRules = () => {
     const violations = [];
-    for (let i = 0; i < layers.length; i++) {
-      for (let j = i + 1; j < layers.length; j++) {
-        const layer1 = layers[i];
-        const layer2 = layers[j];
-        if (doLayersOverlap(layer1, layer2)) {
+    layers.forEach((layer) => {
+      if (layer.type === "nwell" || layer.type === "pwell") {
+        if (
+          layer.width < DESIGN_RULES.WELL_MIN_SIZE ||
+          layer.height < DESIGN_RULES.WELL_MIN_SIZE
+        ) {
           violations.push({
-            type: "overlap",
-            layers: [layer1.id, layer2.id],
-            message: `Layers ${layer1.id} and ${layer2.id} overlap`,
+            type: "well",
+            layers: [layer.id],
+            message: `${layer.type.toUpperCase()} ${
+              layer.id
+            } violates minimum size rule (${DESIGN_RULES.WELL_MIN_SIZE}λ x ${
+              DESIGN_RULES.WELL_MIN_SIZE
+            }λ)`,
           });
         }
       }
-    }
+    });
+
+    // Check well spacing
+    layers.forEach((layer1) => {
+      if (layer1.type === "nwell") {
+        layers.forEach((layer2) => {
+          if (layer2.type === "nwell" && layer1.id !== layer2.id) {
+            const spacing = getLayerSpacing(layer1, layer2);
+            if (spacing < DESIGN_RULES.WELL_SPACING) {
+              violations.push({
+                type: "well",
+                layers: [layer1.id, layer2.id],
+                message: `N-wells ${layer1.id} and ${layer2.id} violate minimum spacing rule (${DESIGN_RULES.WELL_SPACING}λ)`,
+              });
+            }
+          }
+        });
+      }
+    });
+
     return violations;
   };
 
-  const checkMinimumSpacing = () => {
+  const checkDiffusionRules = () => {
     const violations = [];
-    for (let i = 0; i < layers.length; i++) {
-      for (let j = i + 1; j < layers.length; j++) {
-        const layer1 = layers[i];
-        const layer2 = layers[j];
-
-        // Get the specific spacing rule for these layer types
-        const spacingRule =
-          DESIGN_RULES.LAYER_SPECIFIC_SPACING[layer1.type]?.[layer2.type] ||
-          DESIGN_RULES.MIN_SPACING;
-
-        if (getLayerSpacing(layer1, layer2) < spacingRule) {
+    layers.forEach((layer) => {
+      if (layer.type === "diffusion") {
+        // Check minimum size
+        if (
+          layer.width < DESIGN_RULES.DIFF_MIN_SIZE ||
+          layer.height < DESIGN_RULES.DIFF_MIN_SIZE
+        ) {
           violations.push({
-            type: "spacing",
-            layers: [layer1.id, layer2.id],
-            message: `Layers ${layer1.id} (${layer1.type}) and ${layer2.id} (${layer2.type}) violate minimum spacing rule (${spacingRule}λ)`,
+            type: "diffusion",
+            layers: [layer.id],
+            message: `Diffusion ${layer.id} violates minimum size rule (${DESIGN_RULES.DIFF_MIN_SIZE}λ x ${DESIGN_RULES.DIFF_MIN_SIZE}λ)`,
           });
         }
-      }
-    }
-    return violations;
-  };
 
-  const checkLayerMinimumWidth = () => {
-    const violations = [];
-    layers.forEach((layer) => {
-      const minWidth =
-        DESIGN_RULES.LAYER_MIN_WIDTH[layer.type] || DESIGN_RULES.MIN_WIDTH;
-      if (layer.width < minWidth || layer.height < minWidth) {
-        violations.push({
-          type: "width",
-          layers: [layer.id],
-          message: `Layer ${layer.id} (${layer.type}) violates minimum width rule (${minWidth}λ)`,
+        // Check spacing to wells and substrate
+        layers.forEach((otherLayer) => {
+          if (otherLayer.type === "nwell") {
+            const spacing = getLayerSpacing(layer, otherLayer);
+            if (spacing < DESIGN_RULES.DIFF_TO_WELL_SPACING) {
+              violations.push({
+                type: "diffusion",
+                layers: [layer.id, otherLayer.id],
+                message: `Diffusion ${layer.id} and N-well ${otherLayer.id} violate minimum spacing rule (${DESIGN_RULES.DIFF_TO_WELL_SPACING}λ)`,
+              });
+            }
+          }
         });
       }
     });
+
     return violations;
   };
 
-  const checkMinimumArea = () => {
+  const checkPolyRules = () => {
     const violations = [];
     layers.forEach((layer) => {
-      const area = layer.width * layer.height;
-      if (area < DESIGN_RULES.MIN_AREA) {
-        violations.push({
-          type: "area",
-          layers: [layer.id],
-          message: `Layer ${layer.id} (${layer.type}) violates minimum area rule (${DESIGN_RULES.MIN_AREA}λ²)`,
+      if (layer.type === "poly") {
+        // Check minimum width
+        if (
+          layer.width < DESIGN_RULES.POLY_MIN_WIDTH ||
+          layer.height < DESIGN_RULES.POLY_MIN_WIDTH
+        ) {
+          violations.push({
+            type: "poly",
+            layers: [layer.id],
+            message: `Poly ${layer.id} violates minimum width rule (${DESIGN_RULES.POLY_MIN_WIDTH}λ)`,
+          });
+        }
+
+        // Check poly overhang over diffusion
+        layers.forEach((diffLayer) => {
+          if (
+            diffLayer.type === "diffusion" &&
+            doLayersOverlap(layer, diffLayer)
+          ) {
+            const overhang = Math.min(
+              layer.x - diffLayer.x,
+              diffLayer.x + diffLayer.width - (layer.x + layer.width)
+            );
+            if (overhang < DESIGN_RULES.POLY_OVERHANG) {
+              violations.push({
+                type: "poly",
+                layers: [layer.id, diffLayer.id],
+                message: `Poly ${layer.id} overhang over diffusion ${diffLayer.id} violates minimum rule (${DESIGN_RULES.POLY_OVERHANG}λ)`,
+              });
+            }
+          }
         });
       }
     });
+
+    return violations;
+  };
+
+  const checkMetal1Rules = () => {
+    const violations = [];
+    layers.forEach((layer) => {
+      if (layer.type === "metal1") {
+        // Check minimum size
+        if (
+          layer.width < DESIGN_RULES.METAL1_MIN_SIZE ||
+          layer.height < DESIGN_RULES.METAL1_MIN_SIZE
+        ) {
+          violations.push({
+            type: "metal1",
+            layers: [layer.id],
+            message: `Metal1 ${layer.id} violates minimum size rule (${DESIGN_RULES.METAL1_MIN_SIZE}λ x ${DESIGN_RULES.METAL1_MIN_SIZE}λ)`,
+          });
+        }
+
+        // Check spacing to other metal1 layers
+        layers.forEach((otherLayer) => {
+          if (otherLayer.type === "metal1" && layer.id !== otherLayer.id) {
+            const spacing = getLayerSpacing(layer, otherLayer);
+            if (spacing < DESIGN_RULES.METAL1_SPACING) {
+              violations.push({
+                type: "metal1",
+                layers: [layer.id, otherLayer.id],
+                message: `Metal1 ${layer.id} and ${otherLayer.id} violate minimum spacing rule (${DESIGN_RULES.METAL1_SPACING}λ)`,
+              });
+            }
+          }
+        });
+      }
+    });
+
+    return violations;
+  };
+
+  const checkContactRules = () => {
+    const violations = [];
+    // Implementation for contact rules
+    // This would check contact sizes and spacing
     return violations;
   };
 
@@ -131,16 +211,18 @@ const DRC = ({ layers, onClose }) => {
   };
 
   const runDRC = () => {
-    const overlapViolations = checkOverlaps();
-    const spacingViolations = checkMinimumSpacing();
-    const widthViolations = checkLayerMinimumWidth();
-    const areaViolations = checkMinimumArea();
+    const wellViolations = checkWellRules();
+    const diffusionViolations = checkDiffusionRules();
+    const polyViolations = checkPolyRules();
+    const metal1Violations = checkMetal1Rules();
+    const contactViolations = checkContactRules();
 
     return [
-      ...overlapViolations,
-      ...spacingViolations,
-      ...widthViolations,
-      ...areaViolations,
+      ...wellViolations,
+      ...diffusionViolations,
+      ...polyViolations,
+      ...metal1Violations,
+      ...contactViolations,
     ];
   };
 
