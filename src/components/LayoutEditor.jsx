@@ -16,16 +16,38 @@ const LAYER_TYPES = {
     color: "rgba(33, 150, 243, 0.5)",
     pattern: "metal2",
   },
-  poly: {
+
+  P_diffusion: {
+    name: "P_diffusion",
+    color: "rgba(76, 175, 80, 0.5)",
+    pattern: "P_diffusion",
+    },
+
+  N_diffusion: {
+    name: "N_diffusion",
+    color: "rgba(76, 175, 80, 0.5)",
+    pattern: "N_diffusion",
+    },
+
+  via_1: {
+    name: "Via_1",
+    color: "rgba(76, 175, 80, 0.5)",
+    pattern: "Via_1",
+    },
+
+  via_2: {
+    name: "Via_2",
+    color: "rgba(76, 175, 80, 0.5)",
+    pattern: "Via_2",
+    },
+
+  
+poly: {
     name: "Poly",
     color: "rgba(255, 152, 0, 0.5)",
     pattern: "poly",
   },
-  diffusion: {
-    name: "Diffusion",
-    color: "rgba(156, 39, 176, 0.5)",
-    pattern: "diffusion",
-  },
+  
   nwell: {
     name: "N-Well",
     color: "rgba(121, 85, 72, 0.5)",
