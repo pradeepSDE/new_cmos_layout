@@ -29,6 +29,7 @@ const LAYER_TYPES = {
     pattern: "N_diffusion",
     },
 
+
   via_1: {
     name: "Via_1",
     color: "rgba(76, 175, 80, 0.5)",
@@ -58,6 +59,20 @@ poly: {
     color: "rgba(96, 125, 139, 0.5)",
     pattern: "pwell",
   },
+
+  via_1: {
+    name: "Via_1",
+    color: "rgba(76, 175, 80, 0.5)",
+    pattern: "Via_1",
+    },
+
+  via_1: {
+    name: "Via_1",
+    color: "rgba(76, 175, 80, 0.5)",
+    pattern: "Via_1",
+    },
+
+
 };
 
 // Helper function to check if two layers overlap
