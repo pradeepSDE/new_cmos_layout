@@ -6,7 +6,6 @@ const GRID_SIZE = 20; // pixels per grid cell
 const MIN_LAYER_SIZE = 1; // Minimum size of a layer in grid cells
 const LAMBDA_PER_GRID = 1; // 1 lambda per grid cell
 
-
 // Helper function to check if two layers overlap
 const doLayersOverlap = (layer1, layer2) => {
   return !(
@@ -166,39 +165,6 @@ const LayoutEditor = ({ layers, setLayers, onRunDRC }) => {
 
   return (
     <div className="layout-editor">
-      <div className="toolbar">
-        <div className="layer-type-selector">
-          {Object.entries(LAYER_TYPES).map(([type, { name, color }]) => (
-            <button
-            key={type}
-            className={`layer-type-button ${
-              selectedLayerType === type ? "selected" : ""
-            }`}
-            onClick={() => setSelectedLayerType(type)}
-              style={{ backgroundColor: color }}
-              title={name}
-            />
-          ))}
-        </div>
-        <button onClick={handleDeleteLayer} disabled={!selectedLayer}>
-          Delete Layer
-        </button>
-        <button onClick={onRunDRC}>Run DRC</button>
-      </div>
-
-      <div className="dimension-display">
-        {selectedLayer && (
-          <div className="dimension-info">
-            <span>Width: {selectedLayer.width * LAMBDA_PER_GRID}λ</span>
-            <span>Height: {selectedLayer.height * LAMBDA_PER_GRID}λ</span>
-            <span>
-              Position: ({selectedLayer.x * LAMBDA_PER_GRID}λ,{" "}
-              {selectedLayer.y * LAMBDA_PER_GRID}λ)
-            </span>
-          </div>
-        )}
-      </div>
-
       <div
         className="canvas-container"
         ref={canvasRef}
@@ -206,7 +172,7 @@ const LayoutEditor = ({ layers, setLayers, onRunDRC }) => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        >
+      >
         {/* Grid */}
         <div className="grid">
           {Array.from({ length: 50 }).map((_, i) => (
@@ -218,20 +184,21 @@ const LayoutEditor = ({ layers, setLayers, onRunDRC }) => {
                 top: 0,
                 height: "100%",
               }}
-              />
-            ))}
+            />
+          ))}
           {Array.from({ length: 40 }).map((_, i) => (
             <div
-            key={`h-${i}`}
-            className="grid-line"
-            style={{
+              key={`h-${i}`}
+              className="grid-line"
+              style={{
                 top: i * GRID_SIZE,
                 left: 0,
                 width: "100%",
               }}
-              />
-            ))}
+            />
+          ))}
         </div>
+
         {/* Grid Labels */}
         <div className="grid-labels">
           {Array.from({ length: 10 }).map((_, i) => (
@@ -257,7 +224,6 @@ const LayoutEditor = ({ layers, setLayers, onRunDRC }) => {
         {/* Layers */}
         {layers
           .sort((a, b) => {
-            // Sort layers by area (smaller layers on top)
             const areaA = a.width * a.height;
             const areaB = b.width * b.height;
             return areaA - areaB;
@@ -296,6 +262,7 @@ const LayoutEditor = ({ layers, setLayers, onRunDRC }) => {
               />
             );
           })}
+
         {/* Current drawing preview */}
         {isDrawing && (
           <div
@@ -309,7 +276,43 @@ const LayoutEditor = ({ layers, setLayers, onRunDRC }) => {
             }}
           />
         )}
-     
+      </div>
+
+      <div className="toolbar">
+        <div className="action-buttons">
+          <button onClick={handleDeleteLayer} disabled={!selectedLayer}>
+            Delete Layer
+          </button>
+          <button onClick={onRunDRC}>Run DRC</button>
+        </div>
+        <div className="layer-type-selector">
+          {Object.entries(LAYER_TYPES).map(([type, { name, color }]) => (
+            <button
+              key={type}
+              className={`layer-type-button ${
+                selectedLayerType === type ? "selected" : ""
+              }`}
+              onClick={() => setSelectedLayerType(type)}
+              style={{ backgroundColor: color }}
+              title={name}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="dimension-display">
+        {selectedLayer && (
+          <div className="dimension-info">
+            <span>Width: {selectedLayer.width * LAMBDA_PER_GRID}λ</span>
+            <span>Height: {selectedLayer.height * LAMBDA_PER_GRID}λ</span>
+            <span>
+              Position: ({selectedLayer.x * LAMBDA_PER_GRID}λ,{" "}
+              {selectedLayer.y * LAMBDA_PER_GRID}λ)
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
