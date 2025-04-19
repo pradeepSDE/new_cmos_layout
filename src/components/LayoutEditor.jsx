@@ -1,77 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./LayoutEditor.css";
+import LAYER_TYPES from "./LAYER_TYPES";
 
 const GRID_SIZE = 20; // pixels per grid cell
 const MIN_LAYER_SIZE = 1; // Minimum size of a layer in grid cells
 const LAMBDA_PER_GRID = 1; // 1 lambda per grid cell
 
-const LAYER_TYPES = {
-  metal1: {
-    name: "Metal 1",
-    color: "rgba(76, 175, 80, 0.5)",
-    pattern: "metal1",
-  },
-  metal2: {
-    name: "Metal 2",
-    color: "rgba(33, 150, 243, 0.5)",
-    pattern: "metal2",
-  },
-  poly: {
-    name: "Poly",
-    color: "rgba(255,0, 0, 0.6)",
-    pattern: "poly",
-  },
-  diffusion: {
-    name: "Diffusion",
-    color: "rgba(156, 39, 176, 0.5)",
-    pattern: "diffusion",
-  },
-  contact: {
-    name: "Contact",
-    color: "rgba(50, 50, 50, 1.0)",
-    pattern: "contact",
-  },
-  via_1: {
-    name: "Via 1",
-    color: "rgba(80, 80, 80, 1.0)",
-    pattern: "via_1",
-  },
-  via_2: {
-    name: "Via 2",
-    color: "rgba(255, 165, 0, 1.0)",
-    pattern: "via_2",
-  },
-  p_select: {
-    name: "P-Select",
-    color: "rgba(255, 153, 51, 0.5)",
-    pattern: "p_select",
-  },
-  n_select: {
-    name: "N-Select",
-    color: "rgba(255, 255, 102, 0.5)",
-    pattern: "n_select",
-  },
-  p_diffusion: {
-    name: "P-Diffusion",
-    color: "rgba(85, 170, 0, 0.6)",
-    pattern: "p_diffusion",
-  },
-  n_diffusion: {
-    name: "N-Diffusion",
-    color: "rgba(0, 200, 0, 0.6)",
-    pattern: "n_diffusion",
-  },
-  p_well: { 
-    name: "P-Well",
-    color: "rgba(200, 200, 200, 0.4)",
-    pattern: "pwell",
-  },
-  n_well: {
-    name: "N-Well",
-    color: "rgba(134, 20, 205, 0.4)",
-    pattern: "nwell",
-  }
-};
 
 // Helper function to check if two layers overlap
 const doLayersOverlap = (layer1, layer2) => {
@@ -236,11 +170,11 @@ const LayoutEditor = ({ layers, setLayers, onRunDRC }) => {
         <div className="layer-type-selector">
           {Object.entries(LAYER_TYPES).map(([type, { name, color }]) => (
             <button
-              key={type}
-              className={`layer-type-button ${
-                selectedLayerType === type ? "selected" : ""
-              }`}
-              onClick={() => setSelectedLayerType(type)}
+            key={type}
+            className={`layer-type-button ${
+              selectedLayerType === type ? "selected" : ""
+            }`}
+            onClick={() => setSelectedLayerType(type)}
               style={{ backgroundColor: color }}
               title={name}
             />
@@ -272,7 +206,7 @@ const LayoutEditor = ({ layers, setLayers, onRunDRC }) => {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-      >
+        >
         {/* Grid */}
         <div className="grid">
           {Array.from({ length: 50 }).map((_, i) => (
@@ -284,21 +218,20 @@ const LayoutEditor = ({ layers, setLayers, onRunDRC }) => {
                 top: 0,
                 height: "100%",
               }}
-            />
-          ))}
+              />
+            ))}
           {Array.from({ length: 40 }).map((_, i) => (
             <div
-              key={`h-${i}`}
-              className="grid-line"
-              style={{
+            key={`h-${i}`}
+            className="grid-line"
+            style={{
                 top: i * GRID_SIZE,
                 left: 0,
                 width: "100%",
               }}
-            />
-          ))}
+              />
+            ))}
         </div>
-
         {/* Grid Labels */}
         <div className="grid-labels">
           {Array.from({ length: 10 }).map((_, i) => (
