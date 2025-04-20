@@ -15,8 +15,8 @@ const passport = require("passport");
 //   })
 // );
 router.get("/", test);
-router.get('/login/federated/google',googleSignin);
-router.get("/auth/google/callback",googleCallback);
+router.get('/google',googleSignin);
+router.get("/google/callback",googleCallback);
 router.post("/signin",signin )
 router.post('/signup',signup)
 router.get('/profile' , profile)

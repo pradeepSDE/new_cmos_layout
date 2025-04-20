@@ -7,7 +7,7 @@ const session = require("express-session");
 const passport = require("passport");
 const app = express();
 const authenticateJWT = require("./midldlewares/authenticateJWT");
-const createPayment = require("./controllers/paymentControl");
+// const createPayment = require("./controllers/paymentControl");
 app.use(cookieParser());
 app.use(
   session({
@@ -36,9 +36,9 @@ app.use(express.json());
 // app.get("/", (req, res) => {
 //   res.send("Hello World!");
 // });
-app.use("/", require("./routes/authRoute"));
+app.use("/auth", require("./routes/authRoute"));
 app.use(express.urlencoded({ extended: false }));
-const port = 8000;
+const port = 5000;
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
