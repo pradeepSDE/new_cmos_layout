@@ -1,33 +1,39 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import LayoutEditor from "./components/LayoutEditor";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import "./App.css";
-import Layout from "./components/Layout/Layout";
 
 const App = () => {
   // TODO: Add authentication state management
-  const isAuthenticated = true; // This should come from your auth state
+  const isAuthenticated = false; // This should come from your auth state
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? <Layout /> : <Navigate to="/login" replace />
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-      </Routes>
-    </Router>
+    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <LayoutEditor />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Routes>
+      </Router>
+    </GoogleOAuthProvider>
   );
 };
 

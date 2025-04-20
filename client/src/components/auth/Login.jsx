@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
 import "./Auth.css";
 
 const Login = () => {
@@ -22,14 +21,8 @@ const Login = () => {
     }
   };
 
-  const handleGoogleSuccess = (credentialResponse) => {
-    console.log("Google Sign-In successful:", credentialResponse);
-    // TODO: Implement Google authentication logic here
-    navigate("/"); // Redirect to home page after successful Google login
-  };
-
-  const handleGoogleError = () => {
-    setError("Google Sign-In failed. Please try again.");
+  const handleGoogleSignup = () => {
+    console.log("Google signup attempt");
   };
 
   return (
@@ -37,19 +30,23 @@ const Login = () => {
       <div className="auth-form">
         <h2>Login</h2>
         {error && <div className="error-message">{error}</div>}
-
-        <div className="google-signin-container">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={handleGoogleError}
-            useOneTap
-          />
+        <div className="google-button-container">
+         
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = "http://localhost:5000/auth/google";
+            }}
+            className="auth-button-google"
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google logo"
+              className="google-logo"
+            />
+            Sign in with Google
+          </button>
         </div>
-
-        <div className="divider">
-          <span>or</span>
-        </div>
-
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
