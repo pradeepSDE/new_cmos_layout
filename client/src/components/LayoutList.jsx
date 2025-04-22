@@ -9,7 +9,7 @@ const LayoutList = () => {
   useEffect(() => {
     const fetchLayouts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/layouts");
+        const response = await axios.get("http://localhost:5000/api/layouts", {withCredentials: true});
         setLayouts(response.data);
         setLoading(false);
       } catch (error) {

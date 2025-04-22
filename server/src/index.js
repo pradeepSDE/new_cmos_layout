@@ -5,7 +5,9 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const passport = require("passport");
+// const cookieParser = require("cookie-parser");
 const app = express();
+app.use(cookieParser()); // <-- this is required
 const authenticateJWT = require("./midldlewares/authenticateJWT");
 // const createPayment = require("./controllers/paymentControl");
 app.use(cookieParser());
@@ -24,6 +26,7 @@ const corsOptions = {
   origin: ["http://localhost:3000"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "authorization"],
+  credentials: true,
 };
 
 app.use(cors(corsOptions));

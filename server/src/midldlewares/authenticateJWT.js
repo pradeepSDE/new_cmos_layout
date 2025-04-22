@@ -5,6 +5,12 @@ const authenticateJWT = (req, res, next) => {
   console.log(tokenString,"authJWT  ");
   if (tokenString) {
     try {
+      console.log("COOKIE RECEIVED: ", req.cookies);
+console.log("TOKEN STRING: ", tokenString);
+console.log("All cookies:", req.cookies);
+
+      console.log("JWT_SECRET:", process.env.JWT_SECRET);
+
       const decoded = jwt.verify(tokenString, process.env.JWT_SECRET);
       req.user = decoded;
       next();

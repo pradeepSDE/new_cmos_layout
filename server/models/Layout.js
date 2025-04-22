@@ -13,6 +13,11 @@ const layoutSchema = new mongoose.Schema({
     type: Object,
     required: true,
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

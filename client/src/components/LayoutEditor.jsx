@@ -310,11 +310,17 @@ const LayoutEditor = () => {
       if (id) {
         await axios.put(
           `http://localhost:5000/api/layouts/${id}`,
-          layoutToSave
+          layoutToSave,
+          { withCredentials: true }
         );
       } else {
-        await axios.post("http://localhost:5000/api/layouts", layoutToSave);
+        await axios.post(
+          "http://localhost:5000/api/layouts",
+          layoutToSave,
+          { withCredentials: true }
+        );
       }
+      
 
       navigate("/layouts");
     } catch (error) {
