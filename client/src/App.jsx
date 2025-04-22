@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -9,7 +9,8 @@ import LayoutEditor from "./components/LayoutEditor";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 import "./App.css";
-import Layout from "./components/Layout/Layout";
+import LayoutList from "./components/LayoutList";
+import HomeLayoutEditor from "./components/HomeLayoutEditor";
 
 const App = () => {
   // TODO: Add authentication state management
@@ -21,11 +22,18 @@ const App = () => {
         <Route
           path="/"
           element={
-            isAuthenticated ? <Layout /> : <Navigate to="/login" replace />
+            isAuthenticated ? (
+              <HomeLayoutEditor />
+            ) : (
+              <Navigate to="/login" replace />
+            )
           }
         />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/layouts" element={<LayoutList />} />
+        <Route path="/layouts/new" element={<LayoutEditor />} />
+        <Route path="/layouts/:id" element={<LayoutEditor />} />
       </Routes>
     </Router>
   );

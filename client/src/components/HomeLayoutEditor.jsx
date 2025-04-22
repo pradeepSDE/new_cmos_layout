@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import "./LayoutEditor.css";
 import LAYER_TYPES from "./LAYER_TYPES";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
 
 const GRID_SIZE = 20; // pixels per grid cell
 const MIN_LAYER_SIZE = 1; // Minimum size of a layer in grid cells
@@ -25,9 +24,7 @@ const DRC_RULES = {
   minEnclosure: 1, // minimum enclosure in lambda
 };
 
-const LayoutEditor = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+const HomeLayoutEditor = () => {
   const [layout, setLayout] = useState({
     name: "",
     description: "",
@@ -43,30 +40,12 @@ const LayoutEditor = () => {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [selectedLayerType, setSelectedLayerType] = useState("metal1");
   const [drcErrors, setDrcErrors] = useState([]);
+  const canvasRef = useRef(null);
   const [showSaveForm, setShowSaveForm] = useState(false);
   const [saveFormData, setSaveFormData] = useState({
     name: "",
     description: "",
   });
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    if (id) {
-      // Load existing layout
-      axios
-        .get(`http://localhost:5000/api/layouts/${id}`)
-        .then((response) => {
-          setLayout(response.data);
-          setSaveFormData({
-            name: response.data.name,
-            description: response.data.description,
-          });
-        })
-        .catch((error) => {
-          console.error("Error loading layout:", error);
-        });
-    }
-  }, [id]);
 
   // DRC Check Functions
   const checkMinWidth = (layer) => {
@@ -260,7 +239,7 @@ const LayoutEditor = () => {
         },
       }));
       setSelectedLayer(null);
-      runDRC();
+      runDRC(); // Run DRC check after deletion
     }
   };
 
@@ -307,16 +286,22 @@ const LayoutEditor = () => {
         description: saveFormData.description,
       };
 
-      if (id) {
-        await axios.put(
-          `http://localhost:5000/api/layouts/${id}`,
-          layoutToSave
-        );
-      } else {
-        await axios.post("http://localhost:5000/api/layouts", layoutToSave);
-      }
+      await axios.post("http://localhost:5000/api/layouts", layoutToSave);
 
-      navigate("/layouts");
+      // Reset everything after saving
+      setLayout({
+        name: "",
+        description: "",
+        layoutData: {
+          layers: [],
+        },
+      });
+      setSaveFormData({
+        name: "",
+        description: "",
+      });
+      setShowSaveForm(false);
+      setDrcErrors([]);
     } catch (error) {
       console.error("Error saving layout:", error);
     }
@@ -324,6 +309,10 @@ const LayoutEditor = () => {
 
   const handleCancelSave = () => {
     setShowSaveForm(false);
+    setSaveFormData({
+      name: "",
+      description: "",
+    });
   };
 
   return (
@@ -511,4 +500,4 @@ const LayoutEditor = () => {
   );
 };
 
-export default LayoutEditor;
+export default HomeLayoutEditor;

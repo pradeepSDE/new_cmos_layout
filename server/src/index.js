@@ -21,9 +21,7 @@ app.use(
 // Initialize Passport and session management
 const corsOptions = {
   credentials: true,
-  origin: [
-    "http://localhost:3000",
-  ],
+  origin: ["http://localhost:3000"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "authorization"],
 };
@@ -37,6 +35,7 @@ app.use(express.json());
 //   res.send("Hello World!");
 // });
 app.use("/auth", require("./routes/authRoute"));
+app.use("/api/layouts", require("../routes/layouts"));
 app.use(express.urlencoded({ extended: false }));
 const port = 5000;
 app.listen(port, () => {

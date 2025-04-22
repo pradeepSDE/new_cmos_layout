@@ -138,7 +138,7 @@ const googleCallback = (req, res, next) => {
           maxAge: 24 * 60 * 60 * 1000,
         });
 
-        return res.redirect(`${process.env.FRONTEND_URL}/products`);
+        return res.redirect(`${process.env.FRONTEND_URL}/layouts`);
       } catch (error) {
         console.error("JWT creation error:", error);
         res.redirect(`${process.env.FRONTEND_URL}/login?error=true`);
