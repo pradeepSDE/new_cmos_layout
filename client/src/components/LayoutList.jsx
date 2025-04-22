@@ -23,7 +23,7 @@ const LayoutList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/layouts/${id}`);
+      await axios.delete(`http://localhost:5000/api/layouts/${id}`, {withCredentials: true});
       setLayouts(layouts.filter((layout) => layout._id !== id));
     } catch (error) {
       console.error("Error deleting layout:", error);

@@ -74,16 +74,18 @@ router.put("/:id", authenticateJWT, async (req, res) => {
 // Delete a layout (only if it belongs to the authenticated user)
 router.delete("/:id", authenticateJWT, async (req, res) => {
   try {
+    console.log(req.params.id, "req.params.id");
+    console.log(req.user.id, "req.user.id");
     const layout = await Layout.findOne({ 
       _id: req.params.id,
-      user: req.user._id 
+    //   user: req.user.id 
     });
     
     if (!layout) {
       return res.status(404).json({ message: "Layout not found" });
     }
 
-    await layout.remove();
+    await Layout.deleteOne({ _id: layout._id });
     res.json({ message: "Layout deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });
