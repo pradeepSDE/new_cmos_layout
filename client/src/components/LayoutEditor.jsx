@@ -414,6 +414,77 @@ const LayoutEditor = () => {
                 (error) => error.layerId === layer.id
               );
 
+              // Define patterns for different layer types
+              const getLayerPattern = (type) => {
+                switch (type) {
+                  case "metal1":
+                    return {
+                      backgroundImage:
+                        "linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
+                      backgroundSize: "20px 20px",
+                      backgroundPosition: "0 0, 10px 10px",
+                    };
+                  case "metal2":
+                    return {
+                      backgroundImage:
+                        "linear-gradient(90deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
+                      backgroundSize: "20px 20px",
+                      backgroundPosition: "0 0",
+                    };
+                  case "poly":
+                    return {
+                      backgroundImage:
+                        "linear-gradient(0deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
+                      backgroundSize: "20px 20px",
+                      backgroundPosition: "0 0",
+                    };
+                  case "nwell":
+                    return {
+                      backgroundImage:
+                        "radial-gradient(circle, #000 2px, transparent 2px)",
+                      backgroundSize: "10px 10px",
+                      backgroundPosition: "0 0",
+                    };
+                  case "pwell":
+                    return {
+                      backgroundImage:
+                        "radial-gradient(circle, #000 2px, transparent 2px)",
+                      backgroundSize: "10px 10px",
+                      backgroundPosition: "5px 5px",
+                    };
+                  case "ndiff":
+                    return {
+                      backgroundImage:
+                        "linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
+                      backgroundSize: "10px 10px",
+                      backgroundPosition: "0 0",
+                    };
+                  case "pdiff":
+                    return {
+                      backgroundImage:
+                        "linear-gradient(-45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
+                      backgroundSize: "10px 10px",
+                      backgroundPosition: "0 0",
+                    };
+                  case "contact":
+                    return {
+                      backgroundImage:
+                        "linear-gradient(0deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
+                      backgroundSize: "5px 5px",
+                      backgroundPosition: "0 0",
+                    };
+                  case "via":
+                    return {
+                      backgroundImage:
+                        "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
+                      backgroundSize: "5px 5px",
+                      backgroundPosition: "0 0",
+                    };
+                  default:
+                    return {};
+                }
+              };
+
               return (
                 <div
                   key={layer.id}
@@ -430,6 +501,7 @@ const LayoutEditor = () => {
                     width: layer.width * GRID_SIZE,
                     height: layer.height * GRID_SIZE,
                     backgroundColor: layer.color,
+                    ...getLayerPattern(layer.type),
                     zIndex: index,
                   }}
                   onClick={(e) => handleLayerClick(layer, e)}
