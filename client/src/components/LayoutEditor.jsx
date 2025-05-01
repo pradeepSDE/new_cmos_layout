@@ -150,8 +150,13 @@ const LayoutEditor = () => {
     const y = e.clientY - rect.top;
     const gridPos = screenToGrid(x, y);
 
+    // Get all layers at the clicked position, sorted by area (smallest first)
     const layersAtPosition = [...layout.layoutData.layers]
-      .reverse()
+      .sort((a, b) => {
+        const areaA = a.width * a.height;
+        const areaB = b.width * b.height;
+        return areaA - areaB; // Sort by area ascending (smallest first)
+      })
       .filter((layer) => {
         const layerScreenPos = gridToScreen(layer.x, layer.y);
         const layerRect = {
@@ -169,6 +174,7 @@ const LayoutEditor = () => {
       });
 
     if (layersAtPosition.length > 0) {
+      // Select the topmost layer (smallest area)
       const topLayer = layersAtPosition[0];
       setSelectedLayer(topLayer);
       setIsDragging(true);
@@ -314,13 +320,10 @@ const LayoutEditor = () => {
           { withCredentials: true }
         );
       } else {
-        await axios.post(
-          "http://localhost:5000/api/layouts",
-          layoutToSave,
-          { withCredentials: true }
-        );
+        await axios.post("http://localhost:5000/api/layouts", layoutToSave, {
+          withCredentials: true,
+        });
       }
-      
 
       navigate("/layouts");
     } catch (error) {
@@ -404,11 +407,11 @@ const LayoutEditor = () => {
           </div>
 
           {/* Layers */}
-          {layout.layoutData.layers
+          {[...layout.layoutData.layers]
             .sort((a, b) => {
               const areaA = a.width * a.height;
               const areaB = b.width * b.height;
-              return areaA - areaB;
+              return areaB - areaA;
             })
             .map((layer, index) => {
               const isOverlapping = layout.layoutData.layers.some(
