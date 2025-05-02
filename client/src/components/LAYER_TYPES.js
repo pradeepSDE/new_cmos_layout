@@ -19,30 +19,30 @@ const LAYER_TYPES = {
       color: "rgba(156, 39, 176, 0.5)",
       pattern: "diffusion",
     },
-    contact: {
-      name: "Contact",
+    poly_contact: {
+      name: "Poly Contact",
       color: "rgba(50, 50, 50, 1.0)",
-      pattern: "contact",
+      pattern: "poly_contact",
     },
-    via_1: {
-      name: "Via 1",
+    pd_contact: {
+      name: "pd Contact",
       color: "rgba(80, 80, 80, 1.0)",
-      pattern: "via_1",
+      pattern: "pd_contact",
     },
-    via_2: {
-      name: "Via 2",
+    nd_contact: {
+      name: "nd Contact",
       color: "rgba(255, 165, 0, 1.0)",
-      pattern: "via_2",
+      pattern: "nd_contact",
     },
-    p_select: {
-      name: "P-Select",
+    p_substrate: {
+      name: "psubstratepcontact",
       color: "rgba(255, 153, 51, 0.5)",
-      pattern: "p_select",
+      pattern: "p_substrate",
     },
-    n_select: {
-      name: "N-Select",
+    n_substrate: {
+      name: "N-Substrate",
       color: "rgba(255, 255, 102, 0.5)",
-      pattern: "n_select",
+      pattern: "n_substrate",
     },
     p_diffusion: {
       name: "P-Diffusion",
