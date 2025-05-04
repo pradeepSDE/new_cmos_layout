@@ -4,6 +4,7 @@ import LAYER_TYPES from "./LAYER_TYPES";
 import DRC, { runDRC } from "./DRC";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 
 const GRID_SIZE = 20; // pixels per grid cell
 const MIN_LAYER_SIZE = 1; // Minimum size of a layer in grid cells
@@ -329,291 +330,294 @@ const LayoutEditor = () => {
   };
 
   return (
-    <div className="layout-editor">
-      <div className="toolbar">
-        <div className="action-buttons">
-          <button onClick={() => setShowDRC(true)}>Run DRC</button>
-          <button onClick={handleSaveClick}>Save Layout</button>
-        </div>
-        <div className="layer-type-selector">
-          {Object.entries(LAYER_TYPES).map(([type, { name, color }]) => (
-            <button
-              key={type}
-              className={`layer-type-button ${
-                selectedLayerType === type ? "selected" : ""
-              }`}
-              onClick={() => setSelectedLayerType(type)}
-              style={{ backgroundColor: color }}
-              title={name}
-            />
-          ))}
-        </div>
-      </div>
-
-      {showDRC && (
-        <DRC
-          layers={layout.layoutData.layers}
-          onClose={() => setShowDRC(false)}
-        />
-      )}
-
-      <div className="canvas-container">
-        <div
-          ref={canvasRef}
-          className="canvas"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          style={{ position: "relative", width: "100%", height: "100%" }}
-        >
-          {/* Grid */}
-          <div className="grid">
-            {Array.from({ length: 50 }).map((_, i) => (
-              <div
-                key={`v-${i}`}
-                className="grid-line"
-                style={{
-                  left: i * GRID_SIZE,
-                  top: 0,
-                  height: "100%",
-                }}
-              />
-            ))}
-            {Array.from({ length: 40 }).map((_, i) => (
-              <div
-                key={`h-${i}`}
-                className="grid-line"
-                style={{
-                  top: i * GRID_SIZE,
-                  left: 0,
-                  width: "100%",
-                }}
+    <>
+      <Navbar fileName={layout.name} />
+      <div className="layout-editor">
+        <div className="toolbar">
+          <div className="action-buttons">
+            <button onClick={() => setShowDRC(true)}>Run DRC</button>
+            <button onClick={handleSaveClick}>Save Layout</button>
+          </div>
+          <div className="layer-type-selector">
+            {Object.entries(LAYER_TYPES).map(([type, { name, color }]) => (
+              <button
+                key={type}
+                className={`layer-type-button ${
+                  selectedLayerType === type ? "selected" : ""
+                }`}
+                onClick={() => setSelectedLayerType(type)}
+                style={{ backgroundColor: color }}
+                title={name}
               />
             ))}
           </div>
+        </div>
 
-          {/* Layers */}
-          {layout.layoutData.layers
-            .sort((a, b) => {
-              const areaA = a.width * a.height;
-              const areaB = b.width * b.height;
-              return areaB - areaA; // Sort by area (largest to smallest) so smaller layers render last and appear on top
-            })
-            .map((layer, index) => {
-              const isOverlapping = layout.layoutData.layers.some(
-                (otherLayer) =>
-                  otherLayer.id !== layer.id &&
-                  doLayersOverlap(layer, otherLayer)
-              );
-              const hasDrcError = drcViolations.some(
-                (violation) => violation.layerId === layer.id
-              );
+        {showDRC && (
+          <DRC
+            layers={layout.layoutData.layers}
+            onClose={() => setShowDRC(false)}
+          />
+        )}
 
-              // Define patterns for different layer types
-              const getLayerPattern = (type) => {
-                switch (type) {
-                  case "metal1":
-                    return {
-                      backgroundImage:
-                        "linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
-                      backgroundSize: "20px 20px",
-                      backgroundPosition: "0 0, 10px 10px",
-                    };
-                  case "metal2":
-                    return {
-                      backgroundImage:
-                        "linear-gradient(90deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
-                      backgroundSize: "20px 20px",
-                      backgroundPosition: "0 0",
-                    };
-                  case "poly":
-                    return {
-                      backgroundImage:
-                        "linear-gradient(0deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
-                      backgroundSize: "20px 20px",
-                      backgroundPosition: "0 0",
-                    };
-                  case "n_well":
-                    return {
-                      backgroundImage:
-                        "radial-gradient(circle, #000 2px, transparent 2px)",
-                      backgroundSize: "10px 10px",
-                      backgroundPosition: "0 0",
-                    };
-                  case "p_well":
-                    return {
-                      backgroundImage:
-                        "radial-gradient(circle, #000 2px, transparent 2px)",
-                      backgroundSize: "10px 10px",
-                      backgroundPosition: "5px 5px",
-                    };
-                  case "n_diffusion":
-                    return {
-                      backgroundImage:
-                        "linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
-                      backgroundSize: "10px 10px",
-                      backgroundPosition: "0 0",
-                    };
-                  case "p_diffusion":
-                    return {
-                      backgroundImage:
-                        "linear-gradient(-45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
-                      backgroundSize: "10px 10px",
-                      backgroundPosition: "0 0",
-                    };
-                  case "polycontact":
-                    return {
-                      backgroundImage:
-                        "linear-gradient(0deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
-                      backgroundSize: "5px 5px",
-                      backgroundPosition: "0 0",
-                    };
-                  case "pdcontact":
-                    return {
-                      backgroundImage:
-                        "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
-                      backgroundSize: "5px 5px",
-                      backgroundPosition: "0 0",
-                    };
-                  case "ndcontact":
-                    return {
-                      backgroundImage:
-                        "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
-                      backgroundSize: "5px 5px",
-                      backgroundPosition: "0 0",
-                    };
-                  case "psubstratepcontact":
-                    return {
-                      backgroundImage:
-                        "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
-                      backgroundSize: "5px 5px",
-                      backgroundPosition: "0 0",
-                    };
-                  case "nsubstratencontact":
-                    return {
-                      backgroundImage:
-                        "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
-                      backgroundSize: "5px 5px",
-                      backgroundPosition: "0 0",
-                    };
-                  default:
-                    return {};
-                }
-              };
-
-              return (
+        <div className="canvas-container">
+          <div
+            ref={canvasRef}
+            className="canvas"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            style={{ position: "relative", width: "100%", height: "100%" }}
+          >
+            {/* Grid */}
+            <div className="grid">
+              {Array.from({ length: 50 }).map((_, i) => (
                 <div
-                  key={layer.id}
-                  className={`layer ${
-                    selectedLayer?.id === layer.id ? "selected" : ""
-                  } ${isOverlapping ? "overlapping" : ""} ${
-                    hasDrcError ? "drc-error" : ""
-                  }`}
-                  data-pattern={layer.type}
+                  key={`v-${i}`}
+                  className="grid-line"
                   style={{
-                    position: "absolute",
-                    left: layer.x * GRID_SIZE,
-                    top: layer.y * GRID_SIZE,
-                    width: layer.width * GRID_SIZE,
-                    height: layer.height * GRID_SIZE,
-                    backgroundColor: layer.color,
-                    ...getLayerPattern(layer.type),
-                    zIndex: index, // Higher index means higher in the stack
+                    left: i * GRID_SIZE,
+                    top: 0,
+                    height: "100%",
                   }}
-                  onClick={(e) => handleLayerClick(layer, e)}
                 />
-              );
-            })}
+              ))}
+              {Array.from({ length: 40 }).map((_, i) => (
+                <div
+                  key={`h-${i}`}
+                  className="grid-line"
+                  style={{
+                    top: i * GRID_SIZE,
+                    left: 0,
+                    width: "100%",
+                  }}
+                />
+              ))}
+            </div>
 
-          {/* Current drawing preview */}
-          {isDrawing && (
-            <div
-              className="preview-layer"
-              style={{
-                position: "absolute",
-                left: Math.min(startPos.x, currentPos.x) * GRID_SIZE,
-                top: Math.min(startPos.y, currentPos.y) * GRID_SIZE,
-                width: (Math.abs(currentPos.x - startPos.x) + 1) * GRID_SIZE,
-                height: (Math.abs(currentPos.y - startPos.y) + 1) * GRID_SIZE,
-              }}
-            />
+            {/* Layers */}
+            {layout.layoutData.layers
+              .sort((a, b) => {
+                const areaA = a.width * a.height;
+                const areaB = b.width * b.height;
+                return areaB - areaA; // Sort by area (largest to smallest) so smaller layers render last and appear on top
+              })
+              .map((layer, index) => {
+                const isOverlapping = layout.layoutData.layers.some(
+                  (otherLayer) =>
+                    otherLayer.id !== layer.id &&
+                    doLayersOverlap(layer, otherLayer)
+                );
+                const hasDrcError = drcViolations.some(
+                  (violation) => violation.layerId === layer.id
+                );
+
+                // Define patterns for different layer types
+                const getLayerPattern = (type) => {
+                  switch (type) {
+                    case "metal1":
+                      return {
+                        backgroundImage:
+                          "linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
+                        backgroundSize: "20px 20px",
+                        backgroundPosition: "0 0, 10px 10px",
+                      };
+                    case "metal2":
+                      return {
+                        backgroundImage:
+                          "linear-gradient(90deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
+                        backgroundSize: "20px 20px",
+                        backgroundPosition: "0 0",
+                      };
+                    case "poly":
+                      return {
+                        backgroundImage:
+                          "linear-gradient(0deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
+                        backgroundSize: "20px 20px",
+                        backgroundPosition: "0 0",
+                      };
+                    case "n_well":
+                      return {
+                        backgroundImage:
+                          "radial-gradient(circle, #000 2px, transparent 2px)",
+                        backgroundSize: "10px 10px",
+                        backgroundPosition: "0 0",
+                      };
+                    case "p_well":
+                      return {
+                        backgroundImage:
+                          "radial-gradient(circle, #000 2px, transparent 2px)",
+                        backgroundSize: "10px 10px",
+                        backgroundPosition: "5px 5px",
+                      };
+                    case "n_diffusion":
+                      return {
+                        backgroundImage:
+                          "linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
+                        backgroundSize: "10px 10px",
+                        backgroundPosition: "0 0",
+                      };
+                    case "p_diffusion":
+                      return {
+                        backgroundImage:
+                          "linear-gradient(-45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
+                        backgroundSize: "10px 10px",
+                        backgroundPosition: "0 0",
+                      };
+                    case "polycontact":
+                      return {
+                        backgroundImage:
+                          "linear-gradient(0deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
+                        backgroundSize: "5px 5px",
+                        backgroundPosition: "0 0",
+                      };
+                    case "pdcontact":
+                      return {
+                        backgroundImage:
+                          "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
+                        backgroundSize: "5px 5px",
+                        backgroundPosition: "0 0",
+                      };
+                    case "ndcontact":
+                      return {
+                        backgroundImage:
+                          "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
+                        backgroundSize: "5px 5px",
+                        backgroundPosition: "0 0",
+                      };
+                    case "psubstratepcontact":
+                      return {
+                        backgroundImage:
+                          "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
+                        backgroundSize: "5px 5px",
+                        backgroundPosition: "0 0",
+                      };
+                    case "nsubstratencontact":
+                      return {
+                        backgroundImage:
+                          "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
+                        backgroundSize: "5px 5px",
+                        backgroundPosition: "0 0",
+                      };
+                    default:
+                      return {};
+                  }
+                };
+
+                return (
+                  <div
+                    key={layer.id}
+                    className={`layer ${
+                      selectedLayer?.id === layer.id ? "selected" : ""
+                    } ${isOverlapping ? "overlapping" : ""} ${
+                      hasDrcError ? "drc-error" : ""
+                    }`}
+                    data-pattern={layer.type}
+                    style={{
+                      position: "absolute",
+                      left: layer.x * GRID_SIZE,
+                      top: layer.y * GRID_SIZE,
+                      width: layer.width * GRID_SIZE,
+                      height: layer.height * GRID_SIZE,
+                      backgroundColor: layer.color,
+                      ...getLayerPattern(layer.type),
+                      zIndex: index, // Higher index means higher in the stack
+                    }}
+                    onClick={(e) => handleLayerClick(layer, e)}
+                  />
+                );
+              })}
+
+            {/* Current drawing preview */}
+            {isDrawing && (
+              <div
+                className="preview-layer"
+                style={{
+                  position: "absolute",
+                  left: Math.min(startPos.x, currentPos.x) * GRID_SIZE,
+                  top: Math.min(startPos.y, currentPos.y) * GRID_SIZE,
+                  width: (Math.abs(currentPos.x - startPos.x) + 1) * GRID_SIZE,
+                  height: (Math.abs(currentPos.y - startPos.y) + 1) * GRID_SIZE,
+                }}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="dimension-display sidebar">
+          {selectedLayer && (
+            <div className="dimension-info">
+              <span>Width: {selectedLayer.width * LAMBDA_PER_GRID}λ</span>
+              <span>Height: {selectedLayer.height * LAMBDA_PER_GRID}λ</span>
+              {/* <span>
+                Position: ({selectedLayer.x * LAMBDA_PER_GRID}λ,{" "}
+                {selectedLayer.y * LAMBDA_PER_GRID}λ)
+              </span> */}
+            </div>
+          )}
+          {drcViolations.length > 0 && (
+            <div className="drc-violations">
+              <h4>DRC Violations:</h4>
+              {drcViolations.map((violation, index) => (
+                <div
+                  key={`${violation.layerId}-${violation.type}-${index}`}
+                  className={`drc-violation ${
+                    selectedLayer?.id === violation.layerId
+                      ? "selected-layer-violation"
+                      : ""
+                  }`}
+                >
+                  {violation.message}
+                </div>
+              ))}
+            </div>
           )}
         </div>
-      </div>
 
-      <div className="dimension-display sidebar">
-        {selectedLayer && (
-          <div className="dimension-info">
-            <span>Width: {selectedLayer.width * LAMBDA_PER_GRID}λ</span>
-            <span>Height: {selectedLayer.height * LAMBDA_PER_GRID}λ</span>
-            {/* <span>
-              Position: ({selectedLayer.x * LAMBDA_PER_GRID}λ,{" "}
-              {selectedLayer.y * LAMBDA_PER_GRID}λ)
-            </span> */}
+        {showSaveForm && (
+          <div className="save-form-overlay">
+            <div className="save-form">
+              <h3>Save Layout</h3>
+              <form onSubmit={handleSave}>
+                <div className="form-group">
+                  <label htmlFor="name">Layout Name *</label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={saveFormData.name}
+                    onChange={handleSaveFormChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="description">Description</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={saveFormData.description}
+                    onChange={handleSaveFormChange}
+                  />
+                </div>
+                <div className="form-actions">
+                  <button type="submit" className="save-button">
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-button"
+                    onClick={handleCancelSave}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
-        {drcViolations.length > 0 && (
-          <div className="drc-violations">
-            <h4>DRC Violations:</h4>
-            {drcViolations.map((violation, index) => (
-              <div
-                key={`${violation.layerId}-${violation.type}-${index}`}
-                className={`drc-violation ${
-                  selectedLayer?.id === violation.layerId
-                    ? "selected-layer-violation"
-                    : ""
-                }`}
-              >
-                {violation.message}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
-
-      {showSaveForm && (
-        <div className="save-form-overlay">
-          <div className="save-form">
-            <h3>Save Layout</h3>
-            <form onSubmit={handleSave}>
-              <div className="form-group">
-                <label htmlFor="name">Layout Name *</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={saveFormData.name}
-                  onChange={handleSaveFormChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="description">Description</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={saveFormData.description}
-                  onChange={handleSaveFormChange}
-                />
-              </div>
-              <div className="form-actions">
-                <button type="submit" className="save-button">
-                  Save
-                </button>
-                <button
-                  type="button"
-                  className="cancel-button"
-                  onClick={handleCancelSave}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

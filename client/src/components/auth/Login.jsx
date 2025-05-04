@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Auth.css";
+import { useUser } from "../../context/UserContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,6 +17,7 @@ const Login = () => {
     try {
       // TODO: Implement actual login logic here
       console.log("Login attempt with:", { email, password });
+      setUser({ name: email.split("@")[0], email }); // Set user context with placeholder
       navigate("/"); // Redirect to home page after successful login
     } catch (err) {
       setError("Invalid email or password");
