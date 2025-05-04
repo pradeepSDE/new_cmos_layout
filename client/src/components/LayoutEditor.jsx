@@ -542,15 +542,15 @@ const LayoutEditor = () => {
         </div>
       </div>
 
-      <div className="dimension-display">
+      <div className="dimension-display sidebar">
         {selectedLayer && (
           <div className="dimension-info">
             <span>Width: {selectedLayer.width * LAMBDA_PER_GRID}λ</span>
             <span>Height: {selectedLayer.height * LAMBDA_PER_GRID}λ</span>
-            <span>
+            {/* <span>
               Position: ({selectedLayer.x * LAMBDA_PER_GRID}λ,{" "}
               {selectedLayer.y * LAMBDA_PER_GRID}λ)
-            </span>
+            </span> */}
           </div>
         )}
         {drcViolations.length > 0 && (
