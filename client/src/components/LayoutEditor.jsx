@@ -353,14 +353,6 @@ const LayoutEditor = () => {
         />
       )}
 
-      <div className="drc-errors">
-        {drcViolations.map((violation, index) => (
-          <div key={index} className="drc-error">
-            {violation.message}
-          </div>
-        ))}
-      </div>
-
       <div className="canvas-container">
         <div
           ref={canvasRef}
@@ -548,14 +540,30 @@ const LayoutEditor = () => {
 
       <div className="dimension-display">
         {selectedLayer && (
-          <div className="dimension-info">
-            <span>Width: {selectedLayer.width * LAMBDA_PER_GRID}λ</span>
-            <span>Height: {selectedLayer.height * LAMBDA_PER_GRID}λ</span>
-            <span>
-              Position: ({selectedLayer.x * LAMBDA_PER_GRID}λ,{" "}
-              {selectedLayer.y * LAMBDA_PER_GRID}λ)
-            </span>
-          </div>
+          <>
+            <div className="dimension-info">
+              <span>Width: {selectedLayer.width * LAMBDA_PER_GRID}λ</span>
+              <span>Height: {selectedLayer.height * LAMBDA_PER_GRID}λ</span>
+              <span>
+                Position: ({selectedLayer.x * LAMBDA_PER_GRID}λ,{" "}
+                {selectedLayer.y * LAMBDA_PER_GRID}λ)
+              </span>
+            </div>
+            {drcViolations.filter(
+              (violation) => violation.layerId === selectedLayer.id
+            ).length > 0 && (
+              <div className="drc-violations">
+                <h4>DRC Violations:</h4>
+                {drcViolations
+                  .filter((violation) => violation.layerId === selectedLayer.id)
+                  .map((violation, index) => (
+                    <div key={index} className="drc-violation">
+                      {violation.message}
+                    </div>
+                  ))}
+              </div>
+            )}
+          </>
         )}
       </div>
 
