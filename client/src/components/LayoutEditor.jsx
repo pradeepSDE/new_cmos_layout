@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./LayoutEditor.css";
 import LAYER_TYPES from "./LAYER_TYPES";
+import DRC, { runDRC } from "./DRC";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -23,6 +24,7 @@ const DRC_RULES = {
   minWidth: 2, // minimum width in lambda
   minSpacing: 2, // minimum spacing between layers in lambda
   minEnclosure: 1, // minimum enclosure in lambda
+  wellMinSize: 10, // N-well/P-well minimum size in lambda
 };
 
 const LayoutEditor = () => {
@@ -42,7 +44,8 @@ const LayoutEditor = () => {
   const [currentPos, setCurrentPos] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [selectedLayerType, setSelectedLayerType] = useState("metal1");
-  const [drcErrors, setDrcErrors] = useState([]);
+  const [showDRC, setShowDRC] = useState(false);
+  const [drcViolations, setDrcViolations] = useState([]);
   const [showSaveForm, setShowSaveForm] = useState(false);
   const [saveFormData, setSaveFormData] = useState({
     name: "",
@@ -70,6 +73,12 @@ const LayoutEditor = () => {
 
   // DRC Check Functions
   const checkMinWidth = (layer) => {
+    if (layer.type === "n_well" || layer.type === "p_well") {
+      return (
+        layer.width >= DRC_RULES.wellMinSize &&
+        layer.height >= DRC_RULES.wellMinSize
+      );
+    }
     return layer.width >= DRC_RULES.minWidth;
   };
 
@@ -94,28 +103,10 @@ const LayoutEditor = () => {
     });
   };
 
-  const runDRC = () => {
-    const errors = [];
-    layout.layoutData.layers.forEach((layer) => {
-      if (!checkMinWidth(layer)) {
-        errors.push({
-          layerId: layer.id,
-          type: "minWidth",
-          message: `Layer ${layer.type} violates minimum width rule (${DRC_RULES.minWidth}λ)`,
-        });
-      }
-
-      if (!checkMinSpacing(layer, layout.layoutData.layers)) {
-        errors.push({
-          layerId: layer.id,
-          type: "minSpacing",
-          message: `Layer ${layer.type} violates minimum spacing rule (${DRC_RULES.minSpacing}λ)`,
-        });
-      }
-    });
-
-    setDrcErrors(errors);
-    return errors.length === 0;
+  const runDRCCheck = () => {
+    const violations = runDRC(layout.layoutData.layers);
+    setDrcViolations(violations);
+    return violations.length === 0;
   };
 
   // Convert screen coordinates to grid coordinates
@@ -246,7 +237,7 @@ const LayoutEditor = () => {
 
     setIsDrawing(false);
     setIsDragging(false);
-    runDRC();
+    runDRCCheck();
   };
 
   const handleDeleteLayer = () => {
@@ -261,7 +252,7 @@ const LayoutEditor = () => {
         },
       }));
       setSelectedLayer(null);
-      runDRC();
+      runDRCCheck();
     }
   };
 
@@ -279,7 +270,7 @@ const LayoutEditor = () => {
   }, [selectedLayer]);
 
   const handleSaveClick = () => {
-    if (!runDRC()) {
+    if (!runDRCCheck()) {
       alert("Cannot save layout with DRC errors. Please fix the errors first.");
       return;
     }
@@ -337,7 +328,7 @@ const LayoutEditor = () => {
           <button onClick={handleDeleteLayer} disabled={!selectedLayer}>
             Delete Layer
           </button>
-          <button onClick={runDRC}>Run DRC</button>
+          <button onClick={() => setShowDRC(true)}>Run DRC</button>
           <button onClick={handleSaveClick}>Save Layout</button>
         </div>
         <div className="layer-type-selector">
@@ -355,10 +346,17 @@ const LayoutEditor = () => {
         </div>
       </div>
 
+      {showDRC && (
+        <DRC
+          layers={layout.layoutData.layers}
+          onClose={() => setShowDRC(false)}
+        />
+      )}
+
       <div className="drc-errors">
-        {drcErrors.map((error, index) => (
+        {drcViolations.map((violation, index) => (
           <div key={index} className="drc-error">
-            {error.message}
+            {violation.message}
           </div>
         ))}
       </div>
@@ -412,8 +410,8 @@ const LayoutEditor = () => {
                   otherLayer.id !== layer.id &&
                   doLayersOverlap(layer, otherLayer)
               );
-              const hasDrcError = drcErrors.some(
-                (error) => error.layerId === layer.id
+              const hasDrcError = drcViolations.some(
+                (violation) => violation.layerId === layer.id
               );
 
               // Define patterns for different layer types
