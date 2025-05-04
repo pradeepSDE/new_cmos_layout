@@ -9,7 +9,9 @@ const LayoutList = () => {
   useEffect(() => {
     const fetchLayouts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/layouts", {withCredentials: true});
+        const response = await axios.get("http://localhost:5000/api/layouts", {
+          withCredentials: true,
+        });
         setLayouts(response.data);
         setLoading(false);
       } catch (error) {
@@ -23,7 +25,9 @@ const LayoutList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/layouts/${id}`, {withCredentials: true});
+      await axios.delete(`http://localhost:5000/api/layouts/${id}`, {
+        withCredentials: true,
+      });
       setLayouts(layouts.filter((layout) => layout._id !== id));
     } catch (error) {
       console.error("Error deleting layout:", error);

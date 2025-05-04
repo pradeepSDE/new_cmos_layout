@@ -350,9 +350,7 @@ const LayoutEditor = () => {
               onClick={() => setSelectedLayerType(type)}
               style={{ backgroundColor: color }}
               title={name}
-            >
-              {name}
-            </button>
+            />
           ))}
         </div>
       </div>
