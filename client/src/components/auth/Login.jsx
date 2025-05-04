@@ -18,7 +18,7 @@ const Login = () => {
       // TODO: Implement actual login logic here
       console.log("Login attempt with:", { email, password });
       setUser({ name: email.split("@")[0], email }); // Set user context with placeholder
-      navigate("/"); // Redirect to home page after successful login
+      navigate("/layouts"); // Redirect to layouts page after successful login
     } catch (err) {
       setError("Invalid email or password");
     }
@@ -34,7 +34,6 @@ const Login = () => {
         <h2>Login</h2>
         {error && <div className="error-message">{error}</div>}
         <div className="google-button-container">
-         
           <button
             type="button"
             onClick={() => {

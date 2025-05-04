@@ -13,6 +13,7 @@ import LayoutList from "./components/LayoutList";
 import HomeLayoutEditor from "./components/HomeLayoutEditor";
 import axios from "axios";
 import { UserProvider } from "./context/UserContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 axios.defaults.withCredentials = true;
 const App = () => {
   // TODO: Add authentication state management
@@ -22,21 +23,40 @@ const App = () => {
     <UserProvider>
       <Router>
         <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route
             path="/"
             element={
-              isAuthenticated ? (
-                <HomeLayoutEditor />
-              ) : (
-                <Navigate to="/login" replace />
-              )
+              <ProtectedRoute>
+                <Navigate to="/layouts" replace />
+              </ProtectedRoute>
             }
           />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/layouts" element={<LayoutList />} />
-          <Route path="/layouts/new" element={<LayoutEditor />} />
-          <Route path="/layouts/:id" element={<LayoutEditor />} />
+          <Route
+            path="/layouts"
+            element={
+              <ProtectedRoute>
+                <LayoutList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/layouts/new"
+            element={
+              <ProtectedRoute>
+                <LayoutEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/layouts/:id"
+            element={
+              <ProtectedRoute>
+                <LayoutEditor />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Router>
     </UserProvider>

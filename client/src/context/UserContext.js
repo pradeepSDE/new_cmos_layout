@@ -5,6 +5,7 @@ const UserContext = createContext({ user: null, setUser: () => {} });
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch user profile on mount
@@ -16,9 +17,15 @@ export const UserProvider = ({ children }) => {
         } else {
           setUser(null);
         }
+        setLoading(false);
       })
-      .catch(() => setUser(null));
+      .catch(() => {
+        setUser(null);
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
