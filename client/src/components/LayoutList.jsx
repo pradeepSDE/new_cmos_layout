@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Navbar from "./Navbar";
 
 const LayoutList = () => {
   const [layouts, setLayouts] = useState([]);
@@ -37,31 +38,34 @@ const LayoutList = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="layout-list">
-      <h1>Saved Layouts</h1>
-      <Link to="/layouts/new" className="create-button">
-        Create New Layout
-      </Link>
-      <div className="layouts-grid">
-        {layouts.map((layout) => (
-          <div key={layout._id} className="layout-card">
-            <h3>{layout.name}</h3>
-            <p>{layout.description}</p>
-            <div className="layout-actions">
-              <Link to={`/layouts/${layout._id}`} className="edit-button">
-                Edit
-              </Link>
-              <button
-                onClick={() => handleDelete(layout._id)}
-                className="delete-button"
-              >
-                Delete
-              </button>
+    <>
+      <Navbar />
+      <div className="layout-list">
+        <h1>Saved Layouts</h1>
+        <Link to="/layouts/new" className="create-button">
+          Create New Layout
+        </Link>
+        <div className="layouts-grid">
+          {layouts.map((layout) => (
+            <div key={layout._id} className="layout-card">
+              <h3>{layout.name}</h3>
+              <p>{layout.description}</p>
+              <div className="layout-actions">
+                <Link to={`/layouts/${layout._id}`} className="edit-button">
+                  Edit
+                </Link>
+                <button
+                  onClick={() => handleDelete(layout._id)}
+                  className="delete-button"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
