@@ -80,4 +80,20 @@
 
 .navbar-dropdown-logout:hover {
   background: #b71c1c;
+}
+
+.navbar-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  background: #1976d2;
+  transition: box-shadow 0.2s;
+}
+
+.navbar-user-trigger:focus .navbar-avatar,
+.navbar-user-trigger:hover .navbar-avatar {
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.25);
 } 

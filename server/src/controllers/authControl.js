@@ -95,6 +95,7 @@ const profile = (req, res) => {
     jwt.verify(token, process.env.JWT_SECRET, {}, async (err, user) => {
       if (err) throw err;
       const userFull = await User.findById(user.id);
+      console.log(userFull)
       res.json(userFull);
     });
   } else {

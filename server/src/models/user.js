@@ -27,54 +27,7 @@ const userSchema = new Schema(
       unique: true,
       sparse: true, // ✅ this allows multiple documents to omit googleId
     },
-    address: {
-      type: String,
-      trim: true,
-      default: "",
-      // required: true,
-    },
-    phoneNumber: {
-      type: String,
-
-      trim: true,
-    },
-    cart: [
-      {
-        productId: {
-          type: Schema.Types.ObjectId,
-          ref: "Product", // Reference to Product model
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          required: true,
-        },
-        price: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
-    orders: [
-      {
-        orderId: {
-          type: Schema.Types.ObjectId,
-          ref: "Order", // Reference to Order model
-        },
-        orderDate: {
-          type: Date,
-          default: Date.now,
-        },
-        status: {
-          type: String,
-          enum: ["Pending", "Completed", "Cancelled"],
-          default: "Pending",
-        },
-        totalAmount: {
-          type: Number,
-        },
-      },
-    ],
+    avatar: String,
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt timestamps

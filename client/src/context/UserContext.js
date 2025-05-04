@@ -12,8 +12,9 @@ export const UserProvider = ({ children }) => {
     axios
       .get("http://localhost:5000/auth/profile", { withCredentials: true })
       .then((res) => {
+        console.log(res, "res")
         if (res.data && res.data.email) {
-          setUser({ name: res.data.name, email: res.data.email });
+          setUser({ name: res.data.name, email: res.data.email, avatar:res.data.avatar });
         } else {
           setUser(null);
         }
