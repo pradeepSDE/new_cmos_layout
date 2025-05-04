@@ -135,6 +135,7 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   cursor: move;
   transition: all 0.2s;
+  z-index: var(--layer-index);
 }
 
 /* Metal 1 pattern - diagonal lines */

@@ -150,8 +150,9 @@ const LayoutEditor = () => {
     const y = e.clientY - rect.top;
     const gridPos = screenToGrid(x, y);
 
+    // Sort layers by area (smallest to largest) to check for clicks
     const layersAtPosition = [...layout.layoutData.layers]
-      .reverse()
+      .sort((a, b) => a.width * a.height - b.width * b.height)
       .filter((layer) => {
         const layerScreenPos = gridToScreen(layer.x, layer.y);
         const layerRect = {
@@ -169,7 +170,7 @@ const LayoutEditor = () => {
       });
 
     if (layersAtPosition.length > 0) {
-      const topLayer = layersAtPosition[0];
+      const topLayer = layersAtPosition[0]; // This will be the smallest layer
       setSelectedLayer(topLayer);
       setIsDragging(true);
       setDragOffset({
@@ -314,13 +315,10 @@ const LayoutEditor = () => {
           { withCredentials: true }
         );
       } else {
-        await axios.post(
-          "http://localhost:5000/api/layouts",
-          layoutToSave,
-          { withCredentials: true }
-        );
+        await axios.post("http://localhost:5000/api/layouts", layoutToSave, {
+          withCredentials: true,
+        });
       }
-      
 
       navigate("/layouts");
     } catch (error) {
@@ -408,7 +406,7 @@ const LayoutEditor = () => {
             .sort((a, b) => {
               const areaA = a.width * a.height;
               const areaB = b.width * b.height;
-              return areaA - areaB;
+              return areaB - areaA; // Sort by area (largest to smallest) so smaller layers render last and appear on top
             })
             .map((layer, index) => {
               const isOverlapping = layout.layoutData.layers.some(
@@ -508,7 +506,7 @@ const LayoutEditor = () => {
                     height: layer.height * GRID_SIZE,
                     backgroundColor: layer.color,
                     ...getLayerPattern(layer.type),
-                    zIndex: index,
+                    zIndex: index, // Higher index means higher in the stack
                   }}
                   onClick={(e) => handleLayerClick(layer, e)}
                 />
