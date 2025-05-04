@@ -332,9 +332,6 @@ const LayoutEditor = () => {
     <div className="layout-editor">
       <div className="toolbar">
         <div className="action-buttons">
-          <button onClick={handleDeleteLayer} disabled={!selectedLayer}>
-            Delete Layer
-          </button>
           <button onClick={() => setShowDRC(true)}>Run DRC</button>
           <button onClick={handleSaveClick}>Save Layout</button>
         </div>

@@ -11,30 +11,31 @@
 .toolbar {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 10px;
+  gap: 8px;
+  padding: 8px;
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 200px;
+  width: 160px;
   height: fit-content;
 }
 
 .action-buttons {
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .action-buttons button {
   flex: 1;
-  padding: 8px;
+  padding: 6px;
   border: none;
   border-radius: 4px;
   background-color: #2196F3;
   color: white;
   cursor: pointer;
   transition: background-color 0.2s;
+  font-size: 12px;
 }
 
 .action-buttons button:hover {
@@ -49,8 +50,8 @@
 .layer-type-selector {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 10px;
+  gap: 6px;
+  padding: 6px;
 }
 
 .layer-type-button {
