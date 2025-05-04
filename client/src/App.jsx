@@ -11,7 +11,8 @@ import Signup from "./components/auth/Signup";
 import "./App.css";
 import LayoutList from "./components/LayoutList";
 import HomeLayoutEditor from "./components/HomeLayoutEditor";
-
+import axios from 'axios'
+axios.defaults.withCredentials = true;
 const App = () => {
   // TODO: Add authentication state management
   const isAuthenticated = true; // This should come from your auth state

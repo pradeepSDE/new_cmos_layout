@@ -6,7 +6,9 @@ const authenticateJWT = require("../src/midldlewares/authenticateJWT");
 // Get all layouts for the authenticated user
 router.get("/", authenticateJWT, async (req, res) => {
   try {
-    const layouts = await Layout.find({ user: req.user.id }).sort({ createdAt: -1 });
+    const layouts = await Layout.find({ user: req.user.id }).sort({
+      createdAt: -1,
+    });
     res.json(layouts);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -16,11 +18,11 @@ router.get("/", authenticateJWT, async (req, res) => {
 // Get a single layout (only if it belongs to the authenticated user)
 router.get("/:id", authenticateJWT, async (req, res) => {
   try {
-    const layout = await Layout.findOne({ 
+    const layout = await Layout.findOne({
       _id: req.params.id,
-      user: req.user._id 
+      user: req.user.id,
     });
-    
+
     if (!layout) {
       return res.status(404).json({ message: "Layout not found" });
     }
@@ -36,25 +38,25 @@ router.post("/", authenticateJWT, async (req, res) => {
     name: req.body.name,
     description: req.body.description,
     layoutData: req.body.layoutData,
-    user: req.user.id
+    user: req.user.id,
   });
 
   try {
     const newLayout = await layout.save();
     res.status(201).json(newLayout);
   } catch (error) {
-    res.status(400).json({ message: error.message, code:"fuckedup" });
+    res.status(400).json({ message: error.message, code: "fuckedup" });
   }
 });
 
 // Update a layout (only if it belongs to the authenticated user)
-router.put("/:id", authenticateJWT, async (req, res) => {
+router.put("/:id",authenticateJWT, async (req, res) => {
   try {
-    const layout = await Layout.findOne({ 
+    const layout = await Layout.findOne({
       _id: req.params.id,
-      user: req.user._id 
+      user: req.user.id,
     });
-    
+
     if (!layout) {
       return res.status(404).json({ message: "Layout not found" });
     }
@@ -72,15 +74,15 @@ router.put("/:id", authenticateJWT, async (req, res) => {
 });
 
 // Delete a layout (only if it belongs to the authenticated user)
-router.delete("/:id", authenticateJWT, async (req, res) => {
+router.delete("/:id",authenticateJWT, async (req, res) => {
   try {
     console.log(req.params.id, "req.params.id");
     console.log(req.user.id, "req.user.id");
-    const layout = await Layout.findOne({ 
+    const layout = await Layout.findOne({
       _id: req.params.id,
-    //   user: req.user.id 
+      //   user: req.user.id
     });
-    
+
     if (!layout) {
       return res.status(404).json({ message: "Layout not found" });
     }

@@ -5,12 +5,19 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const passport = require("passport");
-// const cookieParser = require("cookie-parser");
 const app = express();
+const corsOptions = {
+  credentials: true,
+  origin: ["http://localhost:3000"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(cookieParser()); // <-- this is required
 const authenticateJWT = require("./midldlewares/authenticateJWT");
 // const createPayment = require("./controllers/paymentControl");
-app.use(cookieParser());
 app.use(
   session({
     secret: "your-secret-key", // Change this to a strong secret key
@@ -21,15 +28,6 @@ app.use(
 );
 
 // Initialize Passport and session management
-const corsOptions = {
-  credentials: true,
-  origin: ["http://localhost:3000"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "authorization"],
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
 
 app.use(passport.initialize());
 app.use(passport.session());
