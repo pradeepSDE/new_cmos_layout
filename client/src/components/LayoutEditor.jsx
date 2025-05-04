@@ -440,42 +440,63 @@ const LayoutEditor = () => {
                       backgroundSize: "20px 20px",
                       backgroundPosition: "0 0",
                     };
-                  case "nwell":
+                  case "n_well":
                     return {
                       backgroundImage:
                         "radial-gradient(circle, #000 2px, transparent 2px)",
                       backgroundSize: "10px 10px",
                       backgroundPosition: "0 0",
                     };
-                  case "pwell":
+                  case "p_well":
                     return {
                       backgroundImage:
                         "radial-gradient(circle, #000 2px, transparent 2px)",
                       backgroundSize: "10px 10px",
                       backgroundPosition: "5px 5px",
                     };
-                  case "ndiff":
+                  case "n_diffusion":
                     return {
                       backgroundImage:
                         "linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
                       backgroundSize: "10px 10px",
                       backgroundPosition: "0 0",
                     };
-                  case "pdiff":
+                  case "p_diffusion":
                     return {
                       backgroundImage:
                         "linear-gradient(-45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
                       backgroundSize: "10px 10px",
                       backgroundPosition: "0 0",
                     };
-                  case "contact":
+                  case "polycontact":
                     return {
                       backgroundImage:
                         "linear-gradient(0deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
                       backgroundSize: "5px 5px",
                       backgroundPosition: "0 0",
                     };
-                  case "via":
+                  case "pdcontact":
+                    return {
+                      backgroundImage:
+                        "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
+                      backgroundSize: "5px 5px",
+                      backgroundPosition: "0 0",
+                    };
+                  case "ndcontact":
+                    return {
+                      backgroundImage:
+                        "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
+                      backgroundSize: "5px 5px",
+                      backgroundPosition: "0 0",
+                    };
+                  case "psubstratepcontact":
+                    return {
+                      backgroundImage:
+                        "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
+                      backgroundSize: "5px 5px",
+                      backgroundPosition: "0 0",
+                    };
+                  case "nsubstratencontact":
                     return {
                       backgroundImage:
                         "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",

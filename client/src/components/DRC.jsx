@@ -30,7 +30,7 @@ const DRC = ({ layers, onClose }) => {
   const checkWellRules = () => {
     const violations = [];
     layers.forEach((layer) => {
-      if (layer.type === "nwell" || layer.type === "pwell") {
+      if (layer.type === "n_well" || layer.type === "p_well") {
         if (
           layer.width < DESIGN_RULES.WELL_MIN_SIZE ||
           layer.height < DESIGN_RULES.WELL_MIN_SIZE
@@ -50,9 +50,9 @@ const DRC = ({ layers, onClose }) => {
 
     // Check well spacing
     layers.forEach((layer1) => {
-      if (layer1.type === "nwell") {
+      if (layer1.type === "n_well") {
         layers.forEach((layer2) => {
-          if (layer2.type === "nwell" && layer1.id !== layer2.id) {
+          if (layer2.type === "n_well" && layer1.id !== layer2.id) {
             const spacing = getLayerSpacing(layer1, layer2);
             if (spacing < DESIGN_RULES.WELL_SPACING) {
               violations.push({
@@ -72,7 +72,7 @@ const DRC = ({ layers, onClose }) => {
   const checkDiffusionRules = () => {
     const violations = [];
     layers.forEach((layer) => {
-      if (layer.type === "diffusion") {
+      if (layer.type === "n_diffusion" || layer.type === "p_diffusion") {
         // Check minimum size
         if (
           layer.width < DESIGN_RULES.DIFF_MIN_SIZE ||
@@ -87,7 +87,7 @@ const DRC = ({ layers, onClose }) => {
 
         // Check spacing to wells and substrate
         layers.forEach((otherLayer) => {
-          if (otherLayer.type === "nwell") {
+          if (otherLayer.type === "n_well") {
             const spacing = getLayerSpacing(layer, otherLayer);
             if (spacing < DESIGN_RULES.DIFF_TO_WELL_SPACING) {
               violations.push({
