@@ -211,6 +211,16 @@
   animation: pwellPattern 2s linear infinite;
 }
 
+.layer.drc-error {
+  border: 2px solid #d32f2f;
+  box-shadow: 0 0 5px rgba(211, 47, 47, 0.3);
+}
+
+.layer.drc-error.selected {
+  border: 2px solid #d32f2f;
+  box-shadow: 0 0 5px rgba(211, 47, 47, 0.5);
+}
+
 .layer:hover {
   border-color: #2196F3;
   box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
@@ -289,6 +299,12 @@
   background-color: rgba(211, 47, 47, 0.1);
   border-radius: 4px;
   margin-bottom: 4px;
+}
+
+.drc-violation.selected-layer-violation {
+  background-color: rgba(211, 47, 47, 0.2);
+  border-left: 3px solid #d32f2f;
+  font-weight: bold;
 }
 
 .drc-violation:last-child {
