@@ -169,10 +169,16 @@ const LayoutEditor = () => {
         y: gridPos.y - topLayer.y,
       });
     } else {
-      setStartPos(gridPos);
-      setCurrentPos(gridPos);
-      setIsDrawing(true);
-      setSelectedLayer(null);
+      // Only start drawing if we're not just clicking
+      if (e.shiftKey) {
+        // Hold Shift key to start drawing
+        setStartPos(gridPos);
+        setCurrentPos(gridPos);
+        setIsDrawing(true);
+        setSelectedLayer(null);
+      } else {
+        setSelectedLayer(null); // Just clear selection if clicking empty space
+      }
     }
   };
 
