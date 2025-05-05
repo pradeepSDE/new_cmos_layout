@@ -413,98 +413,6 @@ const LayoutEditor = () => {
                   (violation) => violation.layerId === layer.id
                 );
 
-                // Define patterns for different layer types
-                const getLayerPattern = (type) => {
-                  switch (type) {
-                    case "metal1":
-                      return {
-                        backgroundImage:
-                          "linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
-                        backgroundSize: "20px 20px",
-                        backgroundPosition: "0 0, 10px 10px",
-                      };
-                    case "metal2":
-                      return {
-                        backgroundImage:
-                          "linear-gradient(90deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
-                        backgroundSize: "20px 20px",
-                        backgroundPosition: "0 0",
-                      };
-                    case "poly":
-                      return {
-                        backgroundImage:
-                          "linear-gradient(0deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
-                        backgroundSize: "20px 20px",
-                        backgroundPosition: "0 0",
-                      };
-                    case "n_well":
-                      return {
-                        backgroundImage:
-                          "radial-gradient(circle, #000 2px, transparent 2px)",
-                        backgroundSize: "10px 10px",
-                        backgroundPosition: "0 0",
-                      };
-                    case "p_well":
-                      return {
-                        backgroundImage:
-                          "radial-gradient(circle, #000 2px, transparent 2px)",
-                        backgroundSize: "10px 10px",
-                        backgroundPosition: "5px 5px",
-                      };
-                    case "n_diffusion":
-                      return {
-                        backgroundImage:
-                          "linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
-                        backgroundSize: "10px 10px",
-                        backgroundPosition: "0 0",
-                      };
-                    case "p_diffusion":
-                      return {
-                        backgroundImage:
-                          "linear-gradient(-45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)",
-                        backgroundSize: "10px 10px",
-                        backgroundPosition: "0 0",
-                      };
-                    case "polycontact":
-                      return {
-                        backgroundImage:
-                          "linear-gradient(0deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
-                        backgroundSize: "5px 5px",
-                        backgroundPosition: "0 0",
-                      };
-                    case "pdcontact":
-                      return {
-                        backgroundImage:
-                          "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
-                        backgroundSize: "5px 5px",
-                        backgroundPosition: "0 0",
-                      };
-                    case "ndcontact":
-                      return {
-                        backgroundImage:
-                          "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
-                        backgroundSize: "5px 5px",
-                        backgroundPosition: "0 0",
-                      };
-                    case "psubstratepcontact":
-                      return {
-                        backgroundImage:
-                          "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
-                        backgroundSize: "5px 5px",
-                        backgroundPosition: "0 0",
-                      };
-                    case "nsubstratencontact":
-                      return {
-                        backgroundImage:
-                          "linear-gradient(90deg, #000 50%, transparent 50%, transparent 100%, #000 100%, #000)",
-                        backgroundSize: "5px 5px",
-                        backgroundPosition: "0 0",
-                      };
-                    default:
-                      return {};
-                  }
-                };
-
                 return (
                   <div
                     key={layer.id}
@@ -513,7 +421,6 @@ const LayoutEditor = () => {
                     } ${isOverlapping ? "overlapping" : ""} ${
                       hasDrcError ? "drc-error" : ""
                     }`}
-                    data-pattern={layer.type}
                     style={{
                       position: "absolute",
                       left: layer.x * GRID_SIZE,
@@ -521,7 +428,6 @@ const LayoutEditor = () => {
                       width: layer.width * GRID_SIZE,
                       height: layer.height * GRID_SIZE,
                       backgroundColor: layer.color,
-                      ...getLayerPattern(layer.type),
                       zIndex: index, // Higher index means higher in the stack
                     }}
                     onClick={(e) => handleLayerClick(layer, e)}
