@@ -86,6 +86,14 @@ const checkDiffusionRules = (layers) => {
 
       // Check spacing to wells and substrate
       layers.forEach((otherLayer) => {
+        // Skip spacing check for n-well with p-diffusion and p-well with n-diffusion
+        if (otherLayer.type === "n_well" && layer.type === "p_diffusion") {
+          return; // Skip spacing check
+        }
+        if (otherLayer.type === "p_well" && layer.type === "n_diffusion") {
+          return; // Skip spacing check
+        }
+
         if (otherLayer.type === "n_well") {
           const spacing = getLayerSpacing(layer, otherLayer);
           if (spacing < DESIGN_RULES.DIFF_TO_WELL_SPACING) {
