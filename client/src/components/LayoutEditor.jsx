@@ -3,7 +3,7 @@ import "./LayoutEditor.css";
 import LAYER_TYPES from "./LAYER_TYPES";
 import DRC, { runDRC } from "./DRC";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Navbar from "./Navbar";
 
 const GRID_SIZE = 20; // pixels per grid cell
@@ -351,7 +351,12 @@ const LayoutEditor = () => {
               />
             ))}
           </div>
-          <button className="tutorials-button">Tutorials</button>
+          <button
+            onClick={() => navigate("/tutorials")}
+            className="tutorials-button"
+          >
+            Tutorials
+          </button>
         </div>
 
         {showDRC && (

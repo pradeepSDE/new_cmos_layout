@@ -14,6 +14,7 @@ import HomeLayoutEditor from "./components/HomeLayoutEditor";
 import axios from "axios";
 import { UserProvider } from "./context/UserContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Tutorial from "./components/Tutorial";
 axios.defaults.withCredentials = true;
 const App = () => {
   // TODO: Add authentication state management
@@ -25,6 +26,7 @@ const App = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/tutorials" element={<Tutorial />} />
           <Route
             path="/"
             element={
