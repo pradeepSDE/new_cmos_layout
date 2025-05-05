@@ -161,18 +161,18 @@ const checkMetal1Rules = (layers) => {
       }
 
       // Check spacing to other metal1 layers
-      layers.forEach((otherLayer) => {
-        if (otherLayer.type === "metal1" && layer.id !== otherLayer.id) {
-          const spacing = getLayerSpacing(layer, otherLayer);
-          if (spacing < DESIGN_RULES.METAL1_SPACING) {
-            violations.push({
-              type: "metal1",
-              layerId: layer.id,
-              message: `Metal1 ${layer.id} and ${otherLayer.id} violate minimum spacing rule (${DESIGN_RULES.METAL1_SPACING}λ)`,
-            });
-          }
-        }
-      });
+      // layers.forEach((otherLayer) => {
+      //   if (otherLayer.type === "metal1" && layer.id !== otherLayer.id) {
+      //     const spacing = getLayerSpacing(layer, otherLayer);
+      //     if (spacing < DESIGN_RULES.METAL1_SPACING) {
+      //       violations.push({
+      //         type: "metal1",
+      //         layerId: layer.id,
+      //         message: `Metal1 ${layer.id} and ${otherLayer.id} violate minimum spacing rule (${DESIGN_RULES.METAL1_SPACING}λ)`,
+      //       });
+      //     }
+      //   }
+      // });
     }
   });
 
