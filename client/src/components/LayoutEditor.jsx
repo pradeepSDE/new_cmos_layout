@@ -351,6 +351,7 @@ const LayoutEditor = () => {
               />
             ))}
           </div>
+          <button className="tutorials-button">Tutorials</button>
         </div>
 
         {showDRC && (
